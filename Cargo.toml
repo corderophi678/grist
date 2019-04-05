@@ -1,0 +1,7 @@
+[package]
+name = "grist"
+version = "0.1.0"
+authors = ["Dr. Rich Cordero <rich@corderophilosophy.com>"]
+edition = "2018"
+
+[dependencies]
