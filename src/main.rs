@@ -1,4 +1,3 @@
-#[allow(unused)]
 use std::env;
 use std::fs::DirBuilder;
 use std::path::Path;
