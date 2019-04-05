@@ -1,3 +1,4 @@
+use std::env::current_dir;
 use std::fs::DirBuilder;
 use std::path::Path;
 use std::process;
@@ -14,11 +15,15 @@ impl Config {
 
         let command = match args.next() {
             Some(arg) => arg,
-            None => return Err("Didn't get a query string"),
+            None => return Err("No command issued. Try 'init',"),
         };
         let path = match args.next() {
             Some(arg) => arg,
-            None => return Err("Didn't get a file name"),
+            None => current_dir()
+                .unwrap()
+                .into_os_string()
+                .into_string()
+                .unwrap(),
         };
 
         Ok(Config { command, path })
