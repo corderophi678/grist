@@ -1,47 +1,53 @@
-// use std::error::Error;
-// use std::fs::DirBuilder;
-// // use std::fs;
+use std::fs::DirBuilder;
+use std::path::Path;
+use std::process;
 
-// #[derive(Debug)]
-// pub struct Config {
-//     pub command: String,
-//     pub path: String,
-// }
+#[derive(Debug)]
+pub struct Config {
+    pub command: String,
+    pub path: String,
+}
 
-// impl Config {
-//     pub fn new(mut args: std::env::Args) -> Result<Config, &'static str> {
-//         args.next();
+impl Config {
+    pub fn new(mut args: std::env::Args) -> Result<Config, &'static str> {
+        args.next();
 
-//         let command = match args.next() {
-//             Some(arg) => arg,
-//             None => return Err("Didn't get a query string"),
-//         };
-//         let path = match args.next() {
-//             Some(arg) => arg,
-//             None => return Err("Didn't get a file name"),
-//         };
+        let command = match args.next() {
+            Some(arg) => arg,
+            None => return Err("Didn't get a query string"),
+        };
+        let path = match args.next() {
+            Some(arg) => arg,
+            None => return Err("Didn't get a file name"),
+        };
 
-//         Ok(Config { command, path })
-//     }
-// }
+        Ok(Config { command, path })
+    }
+}
 
-// pub fn run(config: Config) -> Result<(), &'static str> {
-//     // let path = &config.path;
-//     // let root_path = "";
-//     // let git_path = "";
-//     match config.command {
-//         _ => Err(format!("grist: {} is not a grist command", config.command)),
-//     }
+pub fn run(config: Config) -> Result<(), &'static str> {
+    let command = config.command;
+    let path = config.path;
+    match command.as_ref() {
+        "init" => {
+            let root_path = Path::new(&path);
+            let git_path = root_path.join(".git");
 
-//     Ok(())
-// }
-
-// fn make_dirs(dirs: Vec<String>) -> Result<(), Box<dyn Error>> {
-//     for dir in dirs {
-//         DirBuilder::new().recursive(true).create(dir)?;
-//     }
-//     Ok(())
-// }
+            for dir in ["objects", "refs"].iter() {
+                DirBuilder::new()
+                    .recursive(true)
+                    .create(git_path.join(dir))
+                    .unwrap_or_else(|err| {
+                        eprintln!("Problem creating directories: {}", err);
+                        process::exit(1);
+                    });
+            }
+            println!("Initialized empty grist repository in {:?}", git_path);
+        }
+        _ => eprintln!("grist: {} is not a grist command", command),
+    }
+    Ok(())
+}
 
 #[cfg(test)]
 mod tests {
