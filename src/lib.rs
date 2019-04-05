@@ -1,4 +1,5 @@
 use std::env::current_dir;
+use std::fs;
 use std::fs::DirBuilder;
 use std::path::Path;
 use std::process;
@@ -33,6 +34,7 @@ impl Config {
 pub fn run(config: Config) -> Result<(), &'static str> {
     let command = config.command;
     let path = config.path;
+
     match command.as_ref() {
         "init" => {
             let root_path = Path::new(&path);
@@ -47,7 +49,10 @@ pub fn run(config: Config) -> Result<(), &'static str> {
                         process::exit(1);
                     });
             }
-            println!("Initialized empty grist repository in {:?}", git_path);
+            println!(
+                "Initialized empty grist repository in {}",
+                fs::canonicalize(git_path).unwrap().display()
+            );
         }
         _ => eprintln!("grist: {} is not a grist command", command),
     }
