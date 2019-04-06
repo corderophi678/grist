@@ -6,7 +6,7 @@ use grist::Config;
 
 fn main() {
     let config = Config::new(env::args()).unwrap_or_else(|err| {
-        eprintln!("Error processing arguments: {}", err);
+        eprintln!("Wuhoh! There was an error: {}", err);
         process::exit(1);
     });
 
